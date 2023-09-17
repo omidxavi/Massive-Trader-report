@@ -17,7 +17,7 @@ public class AssetDailyBalanceRepository : IAssetDailyBalanceRepository
         
         using var db = new BourseAccountingDbContext(_postgresConnectionString);
         var result = new List<Models.AssetDailyBalance>();
-        var response =db.asset_daily_balance.OrderByDescending(x => x.Isin == isin
+        var response =db.asset_daily_balance.OrderByDescending(x=>x.InsertionDateTime).Where(x => x.Isin == isin
         ).ToList();
         foreach (var data in response)
         {

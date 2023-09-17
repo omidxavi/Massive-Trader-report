@@ -1,11 +1,5 @@
-using System.Data.Entity.Migrations.Infrastructure;
-using System.Globalization;
 using Algorithm.Mdp.DataProvider.TechnicalInfo;
 using Algorithm.Mdp.Models.Dto;
-using Microsoft.AspNetCore.Hosting.StaticWebAssets;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Npgsql.Internal.TypeHandlers.DateTimeHandlers;
-using ProfitLossCalculatorWebApi.Model;
 using ProfitLossCalculatorWebApi.Persistence.Models;
 using ProfitLossCalculatorWebApi.Persistence.Repositories;
 using ProfitLossCalculatorWebApi.Persistence.Repositories.AssetDailyBalance;
@@ -151,7 +145,7 @@ public class QueryHandler
         var totalBrokerBenefit = response.Sum(x => x.BrokerFee);
         var totalNetBenefit = response.Sum(x => x.NetBenefit);
 
-        result.Add(new Persistence.Models.AssetTransaction
+        result.Add(new AssetTransaction
         {
             SellTradeNum = totalSell,
             BuyTradeNum = totalBuy,
@@ -194,8 +188,13 @@ public class QueryHandler
         var dbAssets = new List<AssetDailyBalance>();
         foreach (var isin in midel)
         {
-            var dbAsset = _assetDailyBalanceRepository.GetAssetByIsin(isin).Result.ToList()[0];
-            dbAssets.Add(dbAsset);
+            var dbAsset = _assetDailyBalanceRepository.GetAssetByIsin(isin);
+            if (dbAsset.Result.ToList().Count !=0)
+            {
+                
+                dbAssets.Add(dbAsset.Result.ToList()[0]);
+
+            }
         }
 
         foreach (var asset in dbAssets)
@@ -229,19 +228,22 @@ public class QueryHandler
                 TimeFrame = GetCandlestickRequest.TimeFrameType.Day,
                 Direction = GetCandlestickRequest.DirectionType.Forward,
                 PriceType = GetCandlestickRequest.PricingType.NormalPrice,
-                StartDate = DateTime.ParseExact(fromDate, "yyyy-MM-dd HH:mm:ss",CultureInfo.CurrentCulture)
+                StartDate = DateTime.Today,
+                StartRangeTime = DateTime.MinValue,
+                EndRangeTime = DateTime.MinValue,
             };
-            var closePrice = _candlestickDataProvider.GetCandlestickInfo(candlestickRequest).Result
-                ;
+            HttpClient client = new HttpClient();
+            //var closePrice =await _candlestickDataProvider.GetCandlestickInfo(candlestickRequest);
+            var closePrice = 1000;
 
             assetDailyBalance.Add(new AssetDailyBalance
             {
                 AssetName = asset.AssetName,
                 Isin = asset.Isin,
                 Quantity = (asset.Quantity + qty),
-                //Value = ((asset.Quantity + qty) * (closePrice)) + commition,
+                Value = ((asset.Quantity + qty) * (closePrice)) - commition,
                 DateTime =insertionTime,
-                InsertionDateTime = DateTime.Now,
+                InsertionDateTime = DateTime.Now.ToUniversalTime(),
 
             }
             );
