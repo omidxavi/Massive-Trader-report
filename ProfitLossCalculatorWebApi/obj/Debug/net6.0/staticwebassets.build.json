@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "gohPcAPhg1yYnGHJ3bczv48rBvp3A9qYbime3ghvsPw=",
+  "Source": "ProfitLossCalculatorWebApi",
+  "BasePath": "_content/ProfitLossCalculatorWebApi",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
