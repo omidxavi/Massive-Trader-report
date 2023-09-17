@@ -22,8 +22,8 @@ public class DataController : ControllerBase
     /// <param name="fromDate"></param>
     /// <param name="toDate"></param>
     /// <returns></returns>
-    [HttpGet("CalculateData")]
-    public async Task<ActionResult<List<AssetTransaction>>> Getdata([FromQuery]  string? fromDate,[FromQuery] string? toDate)
+    [HttpGet("InvoiceMaker")]
+    public async Task<ActionResult<List<AssetTransaction>>> InvoiceMaker([FromQuery]  string? fromDate,[FromQuery] string? toDate)
     {
         var result = await _queryHandler.GetDataFromRayan(fromDate,toDate);
         return result;
@@ -34,4 +34,13 @@ public class DataController : ControllerBase
         var result = await _queryHandler.GetAggregation();
         return result;
     }
+
+    [HttpGet("DailyReport")]
+    public async Task<ActionResult<List<AssetDailyBalance>>> DailyReport([FromQuery] string? fromDate,
+        [FromQuery] string? toDate)
+    {
+        var result = await _queryHandler.CalculateDailyBalance(fromDate, toDate);
+        return result;
+    }
+    
 }

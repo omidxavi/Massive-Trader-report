@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "5jdnBHfnkJ8VPvsYZ+Al7xPoG9SeORNRoAps2o5F8xhe7H5T1xDISM6+4AaJIRsYvisVOdb1k+WvQ3UTB01zzg==",
+  "dgSpecHash": "7h9e54mAy0vUCnJ+cA+dBA4aW2Yrv3LNh2GDBVLiZ+MEgvJhyCd2fmGP5H2LNouUoOSjnN8UXqRrC4zOC8u7yg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\omid\\RiderProjects\\Massive-Trader-report\\ProfitLossCalculatorWebApi\\ProfitLossCalculatorWebApi.csproj",
+  "projectFilePath": "C:\\Users\\omid\\RiderProjects\\Data\\Massive-Trader-report\\ProfitLossCalculatorWebApi\\ProfitLossCalculatorWebApi.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\omid\\.nuget\\packages\\algorithm.mdp\\1.0.5\\algorithm.mdp.1.0.5.nupkg.sha512",
     "C:\\Users\\omid\\.nuget\\packages\\caseextensions\\1.1.0\\caseextensions.1.1.0.nupkg.sha512",

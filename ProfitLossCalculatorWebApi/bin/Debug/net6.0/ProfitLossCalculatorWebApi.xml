@@ -4,7 +4,7 @@
         <name>ProfitLossCalculatorWebApi</name>
     </assembly>
     <members>
-        <member name="M:ProfitLossCalculatorWebApi.Controllers.DataController.Getdata(System.String,System.String)">
+        <member name="M:ProfitLossCalculatorWebApi.Controllers.DataController.InvoiceMaker(System.String,System.String)">
             <summary>
             Date time format : 1402/06/01 and between only one month
             </summary>

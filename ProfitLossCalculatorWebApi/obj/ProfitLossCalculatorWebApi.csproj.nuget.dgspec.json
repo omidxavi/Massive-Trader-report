@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\omid\\RiderProjects\\Massive-Trader-report\\ProfitLossCalculatorWebApi\\ProfitLossCalculatorWebApi.csproj": {}
+    "C:\\Users\\omid\\RiderProjects\\Data\\Massive-Trader-report\\ProfitLossCalculatorWebApi\\ProfitLossCalculatorWebApi.csproj": {}
   },
   "projects": {
-    "C:\\Users\\omid\\RiderProjects\\Massive-Trader-report\\ProfitLossCalculatorWebApi\\ProfitLossCalculatorWebApi.csproj": {
+    "C:\\Users\\omid\\RiderProjects\\Data\\Massive-Trader-report\\ProfitLossCalculatorWebApi\\ProfitLossCalculatorWebApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\omid\\RiderProjects\\Massive-Trader-report\\ProfitLossCalculatorWebApi\\ProfitLossCalculatorWebApi.csproj",
+        "projectUniqueName": "C:\\Users\\omid\\RiderProjects\\Data\\Massive-Trader-report\\ProfitLossCalculatorWebApi\\ProfitLossCalculatorWebApi.csproj",
         "projectName": "ProfitLossCalculatorWebApi",
-        "projectPath": "C:\\Users\\omid\\RiderProjects\\Massive-Trader-report\\ProfitLossCalculatorWebApi\\ProfitLossCalculatorWebApi.csproj",
+        "projectPath": "C:\\Users\\omid\\RiderProjects\\Data\\Massive-Trader-report\\ProfitLossCalculatorWebApi\\ProfitLossCalculatorWebApi.csproj",
         "packagesPath": "C:\\Users\\omid\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\omid\\RiderProjects\\Massive-Trader-report\\ProfitLossCalculatorWebApi\\obj\\",
+        "outputPath": "C:\\Users\\omid\\RiderProjects\\Data\\Massive-Trader-report\\ProfitLossCalculatorWebApi\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

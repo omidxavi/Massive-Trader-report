@@ -8,6 +8,7 @@ using ProfitLossCalculatorWebApi.Persistence;
 using ProfitLossCalculatorWebApi.Persistence.Repositories;
 using ProfitLossCalculatorWebApi.Persistence.Repositories.Asset;
 using ProfitLossCalculatorWebApi.Persistence.Repositories.AssetBalance;
+using ProfitLossCalculatorWebApi.Persistence.Repositories.AssetDailyBalance;
 using ProfitLossCalculatorWebApi.Persistence.Repositories.AssetTransaction;
 using ProfitLossCalculatorWebApi.Services;
 
@@ -78,6 +79,7 @@ public class Program
         services.AddScoped<IAssetRepository, AssetRepository>();
         services.AddScoped<IAssetBalanceRepository, AssetBalanceRepository>();
         services.AddScoped<IAssetTransactionRepository, AssetTransactionRepository>();
+        services.AddScoped<IAssetDailyBalanceRepository, AssetDailyBalanceRepository>();
         services.AddScoped<ReportManager>();
         services.AddScoped<QueryHandler>();
 

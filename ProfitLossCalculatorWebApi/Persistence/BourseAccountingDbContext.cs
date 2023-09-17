@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ProfitLossCalculatorWebApi.Persistence.Models;
+using ProfitLossCalculatorWebApi.Persistence.Repositories.AssetDailyBalance;
 
 namespace ProfitLossCalculatorWebApi.Persistence;
 
@@ -10,6 +11,8 @@ public class BourseAccountingDbContext : DbContext
     public DbSet<Asset> asset { get; set; }
     public DbSet<AssetBalance> asset_balance { get; set; }
     public DbSet<AssetTransaction> asset_transaction { get; set; }
+    
+    public DbSet<AssetDailyBalance> asset_daily_balance { get; set; }
     
     public BourseAccountingDbContext(PostgresConnectionString postgresConnectionString)
     {
