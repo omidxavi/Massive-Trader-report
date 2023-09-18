@@ -19,7 +19,7 @@ public class QueryHandler
 
     public QueryHandler(IMarketDataService marketDataService, ReportManager reportManager,
         IAssetRepository assetRepository, IAssetTransactionRepository assetTransactionRepository,
-        IAssetDailyBalanceRepository assetDailyBalanceRepository ,
+        IAssetDailyBalanceRepository assetDailyBalanceRepository,
         ICandlestickDataProvider candlestickDataProvider)
     {
         _marketDataService = marketDataService;
@@ -189,11 +189,9 @@ public class QueryHandler
         foreach (var isin in midel)
         {
             var dbAsset = _assetDailyBalanceRepository.GetAssetByIsin(isin);
-            if (dbAsset.Result.ToList().Count !=0)
+            if (dbAsset.Result.ToList().Count != 0)
             {
-                
                 dbAssets.Add(dbAsset.Result.ToList()[0]);
-
             }
         }
 
@@ -201,7 +199,10 @@ public class QueryHandler
         {
             decimal sellQty = 0;
             decimal buyQty = 0;
-            var commition = 0;
+            decimal commissionSell = 0;
+            decimal commissionBuy = 0;
+            decimal sellAmount = 0;
+            decimal buyAmount = 0;
             string insertionTime = "";
             var result = concatList.Where(x => x.Isin == asset.Isin).ToList();
             foreach (var transaction in result)
@@ -209,15 +210,21 @@ public class QueryHandler
                 if (transaction.IsAPurchase == 0)
                 {
                     sellQty += transaction.Quantity;
+                    sellAmount += transaction.Amount;
+                    commissionSell += (transaction.BrokerFee + transaction.BourseOrganizationFee);
+
                 }
                 else
                 {
                     buyQty += transaction.Quantity;
+                    buyAmount += transaction.Amount;
+                    commissionBuy += (transaction.BrokerFee + transaction.BourseOrganizationFee);
+
                 }
 
-                commition = +(transaction.BrokerFee + transaction.BourseOrganizationFee);
                 insertionTime = transaction.TransactionDate;
             }
+            
 
             var qty = buyQty - sellQty;
             GetCandlestickRequest candlestickRequest = new GetCandlestickRequest()
@@ -233,21 +240,36 @@ public class QueryHandler
                 EndRangeTime = DateTime.MinValue,
             };
             HttpClient client = new HttpClient();
-            //var closePrice =await _candlestickDataProvider.GetCandlestickInfo(candlestickRequest);
-            var closePrice = 1000;
+            var candlestickInfo = await _candlestickDataProvider.GetCandlestickInfo(candlestickRequest);
+            var closePrice = candlestickInfo.candleStickDtos[0].C;
+            //var closePrice = 1000;
 
             assetDailyBalance.Add(new AssetDailyBalance
-            {
-                AssetName = asset.AssetName,
-                Isin = asset.Isin,
-                Quantity = (asset.Quantity + qty),
-                Value = ((asset.Quantity + qty) * (closePrice)) - commition,
-                DateTime =insertionTime,
-                InsertionDateTime = DateTime.Now.ToUniversalTime(),
-
-            }
+                {
+                    AssetName = asset.AssetName,
+                    Isin = asset.Isin,
+                    Quantity = (asset.Quantity + qty),
+                    Value = ((asset.Quantity + qty) * (closePrice))*Convert.ToDecimal(0.99876502036435169255438353039878) ,
+                    DateTime = insertionTime,
+                    InsertionDateTime = DateTime.Now.ToUniversalTime(),
+                }
             );
+            if (asset.Isin=="irr")
+            {
+                var amount = sellAmount - buyAmount;
+                var commition = 0.0;
+                assetDailyBalance.Add(new AssetDailyBalance
+                {
+                    AssetName = "ریال",
+                    Isin = "irr",
+                    Quantity = asset.Quantity+amount,
+                    Value = asset.Value+amount - (commissionBuy+commissionSell),
+                    DateTime = insertionTime,
+                    InsertionDateTime = DateTime.Now.ToUniversalTime(),
+                });
+            }
         }
+
         _assetDailyBalanceRepository.Add(assetDailyBalance);
         return assetDailyBalance;
     }
