@@ -15,7 +15,7 @@ public class QueryHandler
     private readonly IAssetTransactionRepository _assetTransactionRepository;
     private readonly IAssetDailyBalanceRepository _assetDailyBalanceRepository;
     private readonly ICandlestickDataProvider _candlestickDataProvider;
-    private ReportManager _reportManager;
+    private readonly ReportManager _reportManager;
 
     public QueryHandler(IMarketDataService marketDataService, ReportManager reportManager,
         IAssetRepository assetRepository, IAssetTransactionRepository assetTransactionRepository,
@@ -136,7 +136,7 @@ public class QueryHandler
         var result = new List<AssetTransaction>();
 
 
-        var response = _assetTransactionRepository.GetAssetByAssetId().Result;
+        var response =await _assetTransactionRepository.GetAssetByAssetId();
         var totalSell = response.Sum(x => x.SellTradeNum);
         var totalBuy = response.Sum(x => x.BuyTradeNum);
         var total = response.Sum(x => x.TotalTradeNum);
@@ -183,10 +183,10 @@ public class QueryHandler
 
         // isins = (isins.Distinct<string>().ToList());
         HashSet<string> midel = new HashSet<string>(isins);
-        List<string> j = midel.ToList();
+        List<string> filteredList = midel.ToList();
 
         var dbAssets = new List<AssetDailyBalance>();
-        foreach (var isin in midel)
+        foreach (var isin in filteredList)
         {
             var dbAsset = _assetDailyBalanceRepository.GetAssetByIsin(isin);
             if (dbAsset.Result.ToList().Count != 0)
@@ -239,37 +239,50 @@ public class QueryHandler
                 StartRangeTime = DateTime.MinValue,
                 EndRangeTime = DateTime.MinValue,
             };
-            HttpClient client = new HttpClient();
-            var candlestickInfo = await _candlestickDataProvider.GetCandlestickInfo(candlestickRequest);
-            var closePrice = candlestickInfo.candleStickDtos[0].C;
-            //var closePrice = 1000;
-
-            assetDailyBalance.Add(new AssetDailyBalance
-                {
-                    AssetName = asset.AssetName,
-                    Isin = asset.Isin,
-                    Quantity = (asset.Quantity + qty),
-                    Value = ((asset.Quantity + qty) * (closePrice))*Convert.ToDecimal(0.99876502036435169255438353039878) ,
-                    DateTime = insertionTime,
-                    InsertionDateTime = DateTime.Now.ToUniversalTime(),
-                }
-            );
-            if (asset.Isin=="irr")
+            //HttpClient client = new HttpClient();
+            try
             {
-                var amount = sellAmount - buyAmount;
-                var commition = 0.0;
-                assetDailyBalance.Add(new AssetDailyBalance
+                var candlestickInfo = await _candlestickDataProvider.GetCandlestickInfo(candlestickRequest);
+                if (candlestickInfo != null)
                 {
-                    AssetName = "ریال",
-                    Isin = "irr",
-                    Quantity = asset.Quantity+amount,
-                    Value = asset.Value+amount - (commissionBuy+commissionSell),
-                    DateTime = insertionTime,
-                    InsertionDateTime = DateTime.Now.ToUniversalTime(),
-                });
-            }
-        }
+                    var closePrice = candlestickInfo.candleStickDtos[0].C;
+                
+                    assetDailyBalance.Add(new AssetDailyBalance
+                        {
+                            AssetName = asset.AssetName,
+                            Isin = asset.Isin,
+                            Quantity = (asset.Quantity + qty),
+                            Value = ((asset.Quantity + qty) * (closePrice))*Convert.ToDecimal(0.99876502036435169255438353039878) ,
+                            DateTime = insertionTime,
+                            InsertionDateTime = DateTime.Now.ToUniversalTime(),
+                        }
+                    );
+                }
 
+                if (asset.Isin=="irr")
+                {
+                    var amount = sellAmount - buyAmount;
+                    assetDailyBalance.Add(new AssetDailyBalance
+                    {
+                        AssetName = "ریال",
+                        Isin = "irr",
+                        Quantity = asset.Quantity+amount,
+                        Value = asset.Value+amount - (commissionBuy+commissionSell),
+                        DateTime = insertionTime,
+                        InsertionDateTime = DateTime.Now.ToUniversalTime(),
+                    });
+                }
+
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw;
+            }
+
+
+        }
         _assetDailyBalanceRepository.Add(assetDailyBalance);
         return assetDailyBalance;
     }
