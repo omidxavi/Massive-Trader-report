@@ -136,7 +136,7 @@ public class QueryHandler
         var result = new List<AssetTransaction>();
 
 
-        var response =await _assetTransactionRepository.GetAssetByAssetId();
+        var response = await _assetTransactionRepository.GetAssetByAssetId();
         var totalSell = response.Sum(x => x.SellTradeNum);
         var totalBuy = response.Sum(x => x.BuyTradeNum);
         var total = response.Sum(x => x.TotalTradeNum);
@@ -184,6 +184,7 @@ public class QueryHandler
         // isins = (isins.Distinct<string>().ToList());
         HashSet<string> midel = new HashSet<string>(isins);
         List<string> filteredList = midel.ToList();
+        //filteredList.Add("irr");
 
         var dbAssets = new List<AssetDailyBalance>();
         foreach (var isin in filteredList)
@@ -194,6 +195,9 @@ public class QueryHandler
                 dbAssets.Add(dbAsset.Result.ToList()[0]);
             }
         }
+        decimal totalRial = 0;
+        string insertionTime = "";
+
 
         foreach (var asset in dbAssets)
         {
@@ -203,7 +207,7 @@ public class QueryHandler
             decimal commissionBuy = 0;
             decimal sellAmount = 0;
             decimal buyAmount = 0;
-            string insertionTime = "";
+            ;
             var result = concatList.Where(x => x.Isin == asset.Isin).ToList();
             foreach (var transaction in result)
             {
@@ -212,19 +216,20 @@ public class QueryHandler
                     sellQty += transaction.Quantity;
                     sellAmount += transaction.Amount;
                     commissionSell += (transaction.BrokerFee + transaction.BourseOrganizationFee);
-
+                    //var rial = filteredList.ElementAt(filteredList.IndexOf("irr"));
+                    totalRial += transaction.Amount - (transaction.BrokerFee + transaction.BourseOrganizationFee);
                 }
                 else
                 {
                     buyQty += transaction.Quantity;
                     buyAmount += transaction.Amount;
                     commissionBuy += (transaction.BrokerFee + transaction.BourseOrganizationFee);
-
+                    totalRial -= transaction.Amount - transaction.BrokerFee - transaction.BourseOrganizationFee;
                 }
 
                 insertionTime = transaction.TransactionDate;
             }
-            
+
 
             var qty = buyQty - sellQty;
             GetCandlestickRequest candlestickRequest = new GetCandlestickRequest()
@@ -246,43 +251,36 @@ public class QueryHandler
                 if (candlestickInfo != null)
                 {
                     var closePrice = candlestickInfo.candleStickDtos[0].C;
-                
+
                     assetDailyBalance.Add(new AssetDailyBalance
                         {
                             AssetName = asset.AssetName,
                             Isin = asset.Isin,
                             Quantity = (asset.Quantity + qty),
-                            Value = ((asset.Quantity + qty) * (closePrice))*Convert.ToDecimal(0.99876502036435169255438353039878) ,
+                            Value = ((asset.Quantity + qty) * (closePrice)) *
+                                    Convert.ToDecimal(0.99876502036435169255438353039878),
                             DateTime = insertionTime,
                             InsertionDateTime = DateTime.Now.ToUniversalTime(),
                         }
                     );
                 }
-
-                if (asset.Isin=="irr")
-                {
-                    var amount = sellAmount - buyAmount;
-                    assetDailyBalance.Add(new AssetDailyBalance
-                    {
-                        AssetName = "ریال",
-                        Isin = "irr",
-                        Quantity = asset.Quantity+amount,
-                        Value = asset.Value+amount - (commissionBuy+commissionSell),
-                        DateTime = insertionTime,
-                        InsertionDateTime = DateTime.Now.ToUniversalTime(),
-                    });
-                }
-
-
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
                 throw;
             }
-
-
         }
+        assetDailyBalance.Add(new AssetDailyBalance
+        {
+            AssetName = "ریال",
+            Isin = "irr",
+            Quantity = totalRial,
+            Value = totalRial,
+            DateTime = insertionTime,
+            InsertionDateTime = DateTime.Now.ToUniversalTime(),
+        });
+
         _assetDailyBalanceRepository.Add(assetDailyBalance);
         return assetDailyBalance;
     }
