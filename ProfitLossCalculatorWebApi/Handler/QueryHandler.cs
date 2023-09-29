@@ -184,23 +184,29 @@ public class QueryHandler
         // isins = (isins.Distinct<string>().ToList());
         HashSet<string> midel = new HashSet<string>(isins);
         List<string> filteredList = midel.ToList();
-        //filteredList.Add("irr");
+        filteredList.Add("irr");
 
         var dbAssets = new List<AssetDailyBalance>();
-        foreach (var isin in filteredList)
-        {
-            var dbAsset = _assetDailyBalanceRepository.GetAssetByIsin(isin);
-            if (dbAsset.Result.ToList().Count != 0)
-            {
-                dbAssets.Add(dbAsset.Result.ToList()[0]);
-            }
-        }
-        decimal totalRial = 0;
+        // foreach (var isin in filteredList)
+        // {
+        //     var dbAsset = _assetDailyBalanceRepository.GetAssetByIsin(isin);
+        //     if (dbAsset.Result.ToList().Count != 0)
+        //     {
+        //         dbAssets.Add(dbAsset.Result.ToList()[0]);
+        //     }
+        // }
+         decimal totalRial = 0;
+        
+        dbAssets.AddRange(_assetDailyBalanceRepository.GetLatestData().Result);
         string insertionTime = "";
 
 
         foreach (var asset in dbAssets)
         {
+            if (asset.Isin=="irr")
+            {
+                continue;
+            }
             decimal sellQty = 0;
             decimal buyQty = 0;
             decimal commissionSell = 0;
@@ -209,6 +215,7 @@ public class QueryHandler
             decimal buyAmount = 0;
             ;
             var result = concatList.Where(x => x.Isin == asset.Isin).ToList();
+            
             foreach (var transaction in result)
             {
                 if (transaction.IsAPurchase == 0)
@@ -240,7 +247,7 @@ public class QueryHandler
                 TimeFrame = GetCandlestickRequest.TimeFrameType.Day,
                 Direction = GetCandlestickRequest.DirectionType.Forward,
                 PriceType = GetCandlestickRequest.PricingType.NormalPrice,
-                StartDate = DateTime.Today,
+                StartDate = Convert.ToDateTime("9/27/2023 12:00:00 AM"),
                 StartRangeTime = DateTime.MinValue,
                 EndRangeTime = DateTime.MinValue,
             };
@@ -251,6 +258,8 @@ public class QueryHandler
                 if (candlestickInfo != null)
                 {
                     var closePrice = candlestickInfo.candleStickDtos[0].C;
+                    var test = (asset.Quantity + qty)*closePrice;
+                    Console.WriteLine($"value : {test}");
 
                     assetDailyBalance.Add(new AssetDailyBalance
                         {
@@ -264,6 +273,13 @@ public class QueryHandler
                         }
                     );
                 }
+                else
+                {
+                    Console.WriteLine($"candle does not exist: {candlestickInfo.candleStickDtos}");
+                    Thread.Sleep(1000);
+
+                }
+
             }
             catch (Exception e)
             {
@@ -271,12 +287,14 @@ public class QueryHandler
                 throw;
             }
         }
+
+        var previousRial = dbAssets.SingleOrDefault(x => x.Isin == "irr");
         assetDailyBalance.Add(new AssetDailyBalance
         {
             AssetName = "ریال",
             Isin = "irr",
-            Quantity = totalRial,
-            Value = totalRial,
+            Quantity = previousRial.Quantity+ totalRial,
+            Value = previousRial.Value+totalRial,
             DateTime = insertionTime,
             InsertionDateTime = DateTime.Now.ToUniversalTime(),
         });

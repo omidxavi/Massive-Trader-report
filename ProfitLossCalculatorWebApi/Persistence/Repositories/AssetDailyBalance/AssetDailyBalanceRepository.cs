@@ -27,6 +27,14 @@ public class AssetDailyBalanceRepository : IAssetDailyBalanceRepository
         
     }
 
+    public async Task<List<Models.AssetDailyBalance>> GetLatestData()
+    {
+        using var db = new BourseAccountingDbContext(_postgresConnectionString);
+        //var result = new List<Models.AssetDailyBalance>();
+        var response = db.asset_daily_balance.OrderByDescending(x => x.InsertionDateTime).Take(5).ToList();
+        return response;
+    }
+
     public void Add(List<Models.AssetDailyBalance> assetDailyBalances)
     {
         using var db = new BourseAccountingDbContext(_postgresConnectionString);
