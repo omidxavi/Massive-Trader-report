@@ -20,7 +20,8 @@
           "net6.0"
         ],
         "sources": {
-          "http://nexus.farabixo.tech/repository/nuget-group/": {}
+          "http://nexus.farabixo.tech/repository/nuget-group/": {},
+          "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net6.0": {
