@@ -1,25 +1,32 @@
 {
   "format": 1,
   "restore": {
-    "E:\\Code Repository\\Data\\ProfitLossCalculatorWebApi\\ProfitLossCalculatorWebApi.csproj": {}
+    "C:\\Users\\omid\\RiderProjects\\Data\\Massive-Trader-report\\ProfitLossCalculatorWebApi\\ProfitLossCalculatorWebApi.csproj": {}
   },
   "projects": {
-    "E:\\Code Repository\\Data\\ProfitLossCalculatorWebApi\\ProfitLossCalculatorWebApi.csproj": {
+    "C:\\Users\\omid\\RiderProjects\\Data\\Massive-Trader-report\\ProfitLossCalculatorWebApi\\ProfitLossCalculatorWebApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Code Repository\\Data\\ProfitLossCalculatorWebApi\\ProfitLossCalculatorWebApi.csproj",
+        "projectUniqueName": "C:\\Users\\omid\\RiderProjects\\Data\\Massive-Trader-report\\ProfitLossCalculatorWebApi\\ProfitLossCalculatorWebApi.csproj",
         "projectName": "ProfitLossCalculatorWebApi",
-        "projectPath": "E:\\Code Repository\\Data\\ProfitLossCalculatorWebApi\\ProfitLossCalculatorWebApi.csproj",
-        "packagesPath": "C:\\Users\\Omid\\.nuget\\packages\\",
-        "outputPath": "E:\\Code Repository\\Data\\ProfitLossCalculatorWebApi\\obj\\",
+        "projectPath": "C:\\Users\\omid\\RiderProjects\\Data\\Massive-Trader-report\\ProfitLossCalculatorWebApi\\ProfitLossCalculatorWebApi.csproj",
+        "packagesPath": "C:\\Users\\omid\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\omid\\RiderProjects\\Data\\Massive-Trader-report\\ProfitLossCalculatorWebApi\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\Omid\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\omid\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net6.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "http://nexus.farabixo.tech/repository/nuget-group/": {},
           "https://api.nuget.org/v3/index.json": {}
         },
@@ -119,7 +126,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.414\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.407\\RuntimeIdentifierGraph.json"
         }
       }
     }

@@ -176,6 +176,8 @@ public class QueryHandler
         var concatList = rayan1.Concat(rayan2).ToList();
         List<string> isins = new List<string>();
         var assetDailyBalance = new List<AssetDailyBalance>();
+        string insertionTime = concatList[0].TransactionDate;
+
         foreach (var data in concatList)
         {
             isins.Add(data.Isin);
@@ -198,7 +200,6 @@ public class QueryHandler
          decimal totalRial = 0;
         
         dbAssets.AddRange(_assetDailyBalanceRepository.GetLatestData().Result);
-        string insertionTime = "";
 
 
         foreach (var asset in dbAssets)
@@ -234,7 +235,7 @@ public class QueryHandler
                     totalRial -= transaction.Amount - transaction.BrokerFee - transaction.BourseOrganizationFee;
                 }
 
-                insertionTime = transaction.TransactionDate;
+                //insertionTime = transaction.TransactionDate;
             }
 
 
@@ -247,7 +248,7 @@ public class QueryHandler
                 TimeFrame = GetCandlestickRequest.TimeFrameType.Day,
                 Direction = GetCandlestickRequest.DirectionType.Forward,
                 PriceType = GetCandlestickRequest.PricingType.NormalPrice,
-                StartDate = Convert.ToDateTime("9/27/2023 12:00:00 AM"),
+                StartDate = DateTime.Today,  //Convert.ToDateTime("10/09/2023 12:00:00 AM"), 
                 StartRangeTime = DateTime.MinValue,
                 EndRangeTime = DateTime.MinValue,
             };
@@ -258,16 +259,19 @@ public class QueryHandler
                 if (candlestickInfo != null)
                 {
                     var closePrice = candlestickInfo.candleStickDtos[0].C;
-                    var test = (asset.Quantity + qty)*closePrice;
-                    Console.WriteLine($"value : {test}");
+
+                    // if (insertionTime.Length==0)
+                    // {
+                    //     insertionTime = result[0].TransactionDate;
+                    // }
 
                     assetDailyBalance.Add(new AssetDailyBalance
                         {
                             AssetName = asset.AssetName,
                             Isin = asset.Isin,
                             Quantity = (asset.Quantity + qty),
-                            Value = ((asset.Quantity + qty) * (closePrice)) *
-                                    Convert.ToDecimal(0.99876502036435169255438353039878),
+                            Value = Math.Round(((asset.Quantity + qty) * (closePrice)) *
+                                               Convert.ToDecimal(0.998765),6),
                             DateTime = insertionTime,
                             InsertionDateTime = DateTime.Now.ToUniversalTime(),
                         }
