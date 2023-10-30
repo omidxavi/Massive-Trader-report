@@ -248,7 +248,7 @@ public class QueryHandler
                 TimeFrame = GetCandlestickRequest.TimeFrameType.Day,
                 Direction = GetCandlestickRequest.DirectionType.Forward,
                 PriceType = GetCandlestickRequest.PricingType.NormalPrice,
-                StartDate =DateTime.Today,   //Convert.ToDateTime("10/18/2023 12:00:00 AM"),
+                StartDate =Convert.ToDateTime("10/29/2023 12:00:00 AM"), //DateTime.Today,
                 StartRangeTime = DateTime.MinValue,
                 EndRangeTime = DateTime.MinValue,
             };
