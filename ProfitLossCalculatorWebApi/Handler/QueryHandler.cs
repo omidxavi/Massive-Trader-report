@@ -89,17 +89,25 @@ public class QueryHandler
                                   + rayan2.Where(x => x.IsAPurchase == 1).Sum(x => x.Quantity),
                 AvgBuyPrice = (rayan1.Where(x => x.IsAPurchase == 0).Sum(x => x.Amount) +
                                rayan2.Where(x => x.IsAPurchase == 1).Sum(x => x.Amount)) /
-                              (rayan1.Where(x => x.IsAPurchase == 0)
-                                  .Sum(x =>
-                                      x.Quantity) + rayan2.Where(x => x.IsAPurchase == 0)
-                                  .Sum(x =>
-                                      x.Quantity)),
+                    (rayan1.Where(x => x.IsAPurchase == 0)
+                        .Sum(x =>
+                            x.Quantity) + rayan2.Where(x => x.IsAPurchase == 0)
+                        .Sum(x =>
+                            x.Quantity)) == 0
+                        ? Convert.ToDecimal(0.00000001)
+                        : (rayan1.Where(x => x.IsAPurchase == 0)
+                            .Sum(x =>
+                                x.Quantity) + rayan2.Where(x => x.IsAPurchase == 0)
+                            .Sum(x =>
+                                x.Quantity)),
 
 
                 AvgSellPrice = (rayan1.Where(x => x.IsAPurchase == 1).Sum(x => x.Amount) +
-                                rayan2.Where(x => x.IsAPurchase == 1).Sum(x => x.Amount)) /
-                               (rayan1.Where(x => x.IsAPurchase == 1).Sum(x => x.Quantity) +
-                                rayan2.Where(x => x.IsAPurchase == 1).Sum(x => x.Quantity)),
+                rayan2.Where(x => x.IsAPurchase == 1).Sum(x => x.Amount)) /
+                (rayan1.Where(x => x.IsAPurchase == 1).Sum(x => x.Quantity) +
+                rayan2.Where(x => x.IsAPurchase == 1).Sum(x => x.Quantity)) == 0 ? Convert.ToDecimal(0.00000001) :
+                    (rayan1.Where(x => x.IsAPurchase == 1).Sum(x => x.Quantity) +
+                     rayan2.Where(x => x.IsAPurchase == 1).Sum(x => x.Quantity)),
                 EntraDayCredit = rayan1.Where(x => x.IsAPurchase == 0)
                     .Sum(x => x.Amount - x.BrokerFee -
                               x.BourseOrganizationFee) + rayan2.Where(x => x.IsAPurchase == 0)
@@ -197,17 +205,18 @@ public class QueryHandler
         //         dbAssets.Add(dbAsset.Result.ToList()[0]);
         //     }
         // }
-         decimal totalRial = 0;
-        
+        decimal totalRial = 0;
+
         dbAssets.AddRange(_assetDailyBalanceRepository.GetLatestData().Result);
 
 
         foreach (var asset in dbAssets)
         {
-            if (asset.Isin=="irr")
+            if (asset.Isin == "irr")
             {
                 continue;
             }
+
             decimal sellQty = 0;
             decimal buyQty = 0;
             decimal commissionSell = 0;
@@ -216,7 +225,7 @@ public class QueryHandler
             decimal buyAmount = 0;
             ;
             var result = concatList.Where(x => x.Isin == asset.Isin).ToList();
-            
+
             foreach (var transaction in result)
             {
                 if (transaction.IsAPurchase == 0)
@@ -248,7 +257,7 @@ public class QueryHandler
                 TimeFrame = GetCandlestickRequest.TimeFrameType.Day,
                 Direction = GetCandlestickRequest.DirectionType.Forward,
                 PriceType = GetCandlestickRequest.PricingType.NormalPrice,
-                StartDate =Convert.ToDateTime("10/29/2023 12:00:00 AM"), //DateTime.Today,
+                StartDate = Convert.ToDateTime("11/04/2023 12:00:00 AM"), //DateTime.Today,
                 StartRangeTime = DateTime.MinValue,
                 EndRangeTime = DateTime.MinValue,
             };
@@ -271,7 +280,7 @@ public class QueryHandler
                             Isin = asset.Isin,
                             Quantity = (asset.Quantity + qty),
                             Value = Math.Round(((asset.Quantity + qty) * (closePrice)) *
-                                               Convert.ToDecimal(0.998765),6),
+                                               Convert.ToDecimal(0.998765), 6),
                             DateTime = insertionTime,
                             InsertionDateTime = DateTime.Now.ToUniversalTime(),
                         }
@@ -281,9 +290,7 @@ public class QueryHandler
                 {
                     Console.WriteLine($"candle does not exist: {candlestickInfo.candleStickDtos}");
                     Thread.Sleep(1000);
-
                 }
-
             }
             catch (Exception e)
             {
@@ -297,8 +304,8 @@ public class QueryHandler
         {
             AssetName = "ریال",
             Isin = "irr",
-            Quantity = previousRial.Quantity+ totalRial,
-            Value = previousRial.Value+totalRial,
+            Quantity = previousRial.Quantity + totalRial,
+            Value = previousRial.Value + totalRial,
             DateTime = insertionTime,
             InsertionDateTime = DateTime.Now.ToUniversalTime(),
         });
