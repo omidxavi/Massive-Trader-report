@@ -94,7 +94,7 @@ public class QueryHandler
                             x.Quantity) + rayan2.Where(x => x.IsAPurchase == 0)
                         .Sum(x =>
                             x.Quantity)) == 0
-                        ? Convert.ToDecimal(0.00000001)
+                        ? 1
                         : (rayan1.Where(x => x.IsAPurchase == 0)
                             .Sum(x =>
                                 x.Quantity) + rayan2.Where(x => x.IsAPurchase == 0)
@@ -105,7 +105,7 @@ public class QueryHandler
                 AvgSellPrice = (rayan1.Where(x => x.IsAPurchase == 1).Sum(x => x.Amount) +
                 rayan2.Where(x => x.IsAPurchase == 1).Sum(x => x.Amount)) /
                 (rayan1.Where(x => x.IsAPurchase == 1).Sum(x => x.Quantity) +
-                rayan2.Where(x => x.IsAPurchase == 1).Sum(x => x.Quantity)) == 0 ? Convert.ToDecimal(0.00000001) :
+                rayan2.Where(x => x.IsAPurchase == 1).Sum(x => x.Quantity)) == 0 ? 1 :
                     (rayan1.Where(x => x.IsAPurchase == 1).Sum(x => x.Quantity) +
                      rayan2.Where(x => x.IsAPurchase == 1).Sum(x => x.Quantity)),
                 EntraDayCredit = rayan1.Where(x => x.IsAPurchase == 0)
